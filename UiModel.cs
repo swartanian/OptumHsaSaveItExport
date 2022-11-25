@@ -78,11 +78,11 @@ namespace OptumHsaSaveItExport
                 }
 
                 //sometimes there is an extra "paid from" section
-                var paidFromExtraRow = claimForm.FindElements(By.CssSelector("div.row"));
-                if (paidFromExtraRow.Count == 7)
+                var allClaimRows = claimForm.FindElements(By.CssSelector("div.row"));
+                if (allClaimRows.Count == 7)
                 {
                     int indexOfPaidFromExtraRow = systemClaim ? 2 : 1;
-                    var paidFromExtraRowText = paidFromExtraRow[indexOfPaidFromExtraRow].FindElement(By.CssSelector("div.form-group"));
+                    var paidFromExtraRowText = allClaimRows[indexOfPaidFromExtraRow].FindElement(By.CssSelector("div.form-group"));
                     data.AddProperty("Paid From Personal Funds", paidFromExtraRowText.Text);
                 }
 
