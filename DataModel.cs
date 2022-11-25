@@ -29,9 +29,7 @@ namespace OptumHsaSaveItExport
 
             string cleanField = field.CleanName();
             string cleanValue = value.CleanValue();
-            currentRecord.Add(cleanField, value.CleanValue());
-            //Console.WriteLine("{0}:{1}", field, value);
-            //Console.WriteLine("{0}:{1}", cleanField, cleanValue);
+            currentRecord[cleanField] = cleanValue; // add or overwrite
 
             //update field statistics
             if (fieldInfo.ContainsKey(cleanField))
@@ -42,6 +40,13 @@ namespace OptumHsaSaveItExport
             {
                 fieldInfo[cleanField] = 1;
             }
+        }
+        
+        public string GetProperty(string field)
+        {
+            string ret;
+            bool present = currentRecord.TryGetValue(field.CleanName(), out ret);
+            return present ? ret : "";
         }
 
         public void WriteToCsv()
