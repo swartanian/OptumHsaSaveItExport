@@ -258,27 +258,41 @@ namespace OptumHsaSaveItExport
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
 
-            driver.Url = "https://microsoftbenefits.ehr.com/DEFAULT.ASHX?classname=LOGIN";
-
-            //SSO Sign-in
-            var signInButton = driver.FindElement(By.LinkText("Sign In"));
-            signInButton.Click();
-
             string line = new string('=', 85);
-            Console.WriteLine(line +"\nACTION NEEDED: Login Now.\nYou have 60 seconds to login.\n" + line);
+            Console.WriteLine(line + "\nACTION NEEDED: You have 60 seconds to login.");
+            if (Settings.Login == LoginType.manualLogin)
+            {
+                Console.WriteLine(" Please login and navigate to Optum's HSA save-it account" +
+                    "\n NOTE: Your URL should end in 'piggybank'" +
+                    "\n" + line);
+            }
 
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("idSIButton9"))).Click();
+            if (Settings.Login >= LoginType.basiclogin)
+            {
+                driver.Url = "https://microsoftbenefits.ehr.com/DEFAULT.ASHX?classname=LOGIN";
 
-            wait.Until(ExpectedConditions.UrlMatches("https://login.microsoftonline.com/.*/login"));
-            wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("idSIButton9"))).Click();
+                //SSO Sign-in
+                var signInButton = driver.FindElement(By.LinkText("Sign In"));
+                signInButton.Click();
 
-            wait.Until(ExpectedConditions.UrlToBe("https://hrportal.ehr.com/microsoftbenefits"));
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("idSIButton9"))).Click();
 
-            driver.Url = "https://hrportal.ehr.com/microsoftbenefits/Home/Redirects/Pay-My-Provider-Premera";
-            wait.Until(ExpectedConditions.UrlContains("https://www.fundingpremerawa.com/"));
+                if (Settings.Login == LoginType.fulllogin)
+                {
+                    wait.Until(ExpectedConditions.UrlMatches("https://login.microsoftonline.com/.*/login"));
+                    wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("idSIButton9"))).Click();
+                }
 
-            //Go to save-it
-            driver.Url = "https://www.fundingpremerawa.com/portal/CC/cdhportal/cdhaccount/piggybank";
+                wait.Until(ExpectedConditions.UrlToBe("https://hrportal.ehr.com/microsoftbenefits"));
+
+                driver.Url = "https://hrportal.ehr.com/microsoftbenefits/Home/Redirects/Pay-My-Provider-Premera";
+                wait.Until(ExpectedConditions.UrlContains("https://www.fundingpremerawa.com/"));
+
+                //Go to save-it
+                driver.Url = "https://www.fundingpremerawa.com/portal/CC/cdhportal/cdhaccount/piggybank";
+            }
+
+            wait.Until(ExpectedConditions.UrlContains("https://www.fundingpremerawa.com/portal/CC/cdhportal/cdhaccount/piggybank"));
         }
 
     }
