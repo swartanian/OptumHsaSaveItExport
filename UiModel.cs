@@ -64,7 +64,8 @@ namespace OptumHsaSaveItExport
                 }
                 data.AddProperty("Meta Claim Type", systemClaim ? "system generated claim" : "manually entered claim");
 
-                var claimForm = systemClaim ? FindId("healthPlanClaim") : FindId("claimCenter");
+                string claimFormName = systemClaim ? "healthPlanClaim" : "claimCenter";
+                var claimForm = FindId(claimFormName);
 
                 //service info section
                 var serviceInfoSection = claimForm.FindElements(By.CssSelector("div.row"))[0]; // the first section doesn't have any further identifiers
@@ -120,7 +121,7 @@ namespace OptumHsaSaveItExport
                     fileName = Regex.Replace(fileName, @"[\/?:*""><|]+", "", RegexOptions.Compiled);
 
                     docItems[0].Click(); //it doesn't matter which one to click on, they all go to the same page
-                    HandleDocuments(fileName);
+                    HandleDocuments(fileName, claimFormName);
                 }
             }
             catch (Exception e)
@@ -129,16 +130,16 @@ namespace OptumHsaSaveItExport
             }        
         }
 
-        private void HandleDocuments(string fileName)
+        private void HandleDocuments(string fileName, string claimFormName)
         {
-            int docCount = GetOnlyDocumentLinks().Count;
+            int docCount = GetOnlyDocumentLinks(claimFormName).Count;
             for (int i = 0; i < docCount; i++)
             {
-                var docLink = GetOnlyDocumentLinks()[i]; //the page reloads on each click, so we can't foreach the aTags collection but instead have to index into it and rebuild the document link collection after each click
+                var docLink = GetOnlyDocumentLinks(claimFormName)[i]; //the page reloads on each click, so we can't foreach the aTags collection but instead have to index into it and rebuild the document link collection after each click
                 docLink.Click();
 
                 //Image
-                var images = driver.FindElements(By.CssSelector("#healthPlanClaim img"));
+                var images = driver.FindElements(By.CssSelector(string.Format("#{0} img", claimFormName)));
                 if (images.Count > 0)
                 {
                     string url = images[0].GetAttribute("src");
@@ -146,7 +147,7 @@ namespace OptumHsaSaveItExport
                 }
 
                 //PDF
-                var pdfs = driver.FindElements(By.CssSelector("#healthPlanClaim iframe"));
+                var pdfs = driver.FindElements(By.CssSelector(string.Format("#{0} iframe", claimFormName)));
                 if (pdfs.Count > 0)
                 {
                     string url = pdfs[0].GetAttribute("src");
@@ -156,11 +157,12 @@ namespace OptumHsaSaveItExport
             }
         }
 
-        private Collection<IWebElement> GetOnlyDocumentLinks()
+        private Collection<IWebElement> GetOnlyDocumentLinks(string claimFormName)
         {
             Collection<IWebElement> ret = new Collection<IWebElement>();
 
-            ReadOnlyCollection<IWebElement> aTags = driver.FindElements(By.CssSelector("#healthPlanClaim a"));
+            var aTags = driver.FindElements(By.CssSelector(string.Format("#{0} a", claimFormName)));
+ 
             foreach (var tag in aTags)
             {
                 if (tag.Text.ToLower().StartsWith("page"))
