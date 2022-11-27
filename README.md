@@ -5,8 +5,8 @@ This project scrapes your own Optum HSA Save-It account using Selenium automatio
 Copy the release locally and unzip to a folder
 
 ## Run instructions
-Open a command prompt
-Navigate to the folder and run the OptumHsaSaveItExport.exe
+1. Open a command prompt
+2. Navigate to the folder and run the OptumHsaSaveItExport.exe
 
 ## Optional parameters
 The following are optional parameters to customize the login handling
