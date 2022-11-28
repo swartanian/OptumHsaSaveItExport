@@ -44,21 +44,16 @@ jobs:
       run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
-
-    - name: Zip Release
-      uses: TheDoctor0/zip-release@0.6.2
-      with:
-        # Filename for archive
-        filename: OptumHsaSaveItExport.zip # default is release.zip
-        # Base path for archive files
-        path: . # optional, default is .
-        # Working directory before zipping
-        directory: bin/release # optional, default is .
         
-    - name: Upload a Build Artifact
+    # Upload binaries
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v3.1.1
+      env:
+        Configuration:  ${{ matrix.configuration }}
       with:
+        name: OptumHsaSaveItExport
         # A file, directory or wildcard pattern that describes what to upload
         path: |
-          **/*.zip
+          bin/$env:Configuration/**/*
+        
     
