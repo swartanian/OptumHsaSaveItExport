@@ -256,11 +256,11 @@ namespace OptumHsaSaveItExport
 
         public void Login()
         {
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
 
             string line = new string('=', 85);
-            Console.WriteLine(line + "\nACTION NEEDED: You have 60 seconds to login.");
-            if (Settings.Login == LoginType.manualLogin)
+            Console.WriteLine(line + "\nACTION NEEDED: You have 120 seconds to login.");
+            if (Settings.Login == LoginType.manuallogin)
             {
                 Console.WriteLine(" Please login and navigate to Optum's HSA save-it account" +
                     "\n NOTE: Your URL should end in 'piggybank'" +
@@ -269,25 +269,8 @@ namespace OptumHsaSaveItExport
 
             if (Settings.Login >= LoginType.basiclogin)
             {
-                driver.Url = "https://microsoftbenefits.ehr.com/DEFAULT.ASHX?classname=LOGIN";
-
-                //SSO Sign-in
-                var signInButton = driver.FindElement(By.LinkText("Sign In"));
-                signInButton.Click();
-
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("idSIButton9"))).Click();
-
-                if (Settings.Login == LoginType.fulllogin)
-                {
-                    wait.Until(ExpectedConditions.UrlMatches("https://login.microsoftonline.com/.*/login"));
-                    wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("idSIButton9"))).Click();
-                }
-
-                wait.Until(ExpectedConditions.UrlToBe("https://hrportal.ehr.com/microsoftbenefits"));
-
-                driver.Url = "https://hrportal.ehr.com/microsoftbenefits/Home/Redirects/Pay-My-Provider-Premera";
+                driver.Url = "https://aka.ms/BCP/FSA_HSA";
                 wait.Until(ExpectedConditions.UrlContains("https://www.fundingpremerawa.com/"));
-
                 //Go to save-it
                 driver.Url = "https://www.fundingpremerawa.com/portal/CC/cdhportal/cdhaccount/piggybank";
             }

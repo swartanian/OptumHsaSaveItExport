@@ -8,7 +8,7 @@ namespace OptumHsaSaveItExport
 {
     public enum LoginType
     {
-        manualLogin,
+        manuallogin,
         basiclogin,
         fulllogin
     }
