@@ -269,7 +269,9 @@ namespace OptumHsaSaveItExport
 
             if (Settings.Login >= LoginType.basiclogin)
             {
-                driver.Url = "https://aka.ms/BCP/FSA_HSA";
+                // driver.Url aka link - [https://aka.ms/BCP/FSA_HSA]
+                driver.Url = "https://myapps.microsoft.com/signin/HRIT-Premera-Prod/d1b6f28d-e277-48bf-8871-35a37e6de488?tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47&relaystate=https%3A%2F%2Fmember.premera.com%2FYmlsbHBheQ%3D%3D";
+                
                 wait.Until(ExpectedConditions.UrlContains("https://www.fundingpremerawa.com/"));
                 //Go to save-it
                 driver.Url = "https://www.fundingpremerawa.com/portal/CC/cdhportal/cdhaccount/piggybank";
