@@ -241,8 +241,11 @@ namespace OptumHsaSaveItExport
 
         public List<string> GetAllClaimLinks()
         {
-            var showMore = driver.FindElement(By.LinkText("Show More Records"));
-            showMore.Click();
+            var showMore = driver.FindElements(By.LinkText("Show More Records"));
+            if (showMore.Count > 0)
+            {
+                showMore[0].Click();
+            }
 
             var linkElements = driver.FindElements(By.CssSelector("#transactionsTable a"));
             List<string> links = new List<string>();
