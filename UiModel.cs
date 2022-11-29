@@ -99,8 +99,12 @@ namespace OptumHsaSaveItExport
                 string myNotes = driver.FindElement(By.Id("viewMyNotes")).Text;
                 data.AddProperty("Notes", myNotes);
 
-                string customerServiceNotes = driver.FindElement(By.Id("csNotesPane")).Text;
-                data.AddProperty("Customer Service Notes", customerServiceNotes);
+                //customer Service Notes - this appears for most but not all records
+                var customerServiceNotes = driver.FindElements(By.Id("csNotesPane"));
+                if (customerServiceNotes.Count > 0)
+                {
+                    data.AddProperty("Customer Service Notes", customerServiceNotes[0].Text);
+                }
 
                 //documentation
                 var docs = driver.FindElement(By.CssSelector("div.col-xs-12.no-table"));

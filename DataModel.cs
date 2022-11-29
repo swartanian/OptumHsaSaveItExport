@@ -98,10 +98,12 @@ namespace OptumHsaSaveItExport
         public static string CleanName(this string s) =>
             CultureInfo.InvariantCulture.TextInfo
                 .ToTitleCase(s.ToLowerInvariant())
-                .Replace(" ", "");     
+                .Replace(" ", "")
+                .Replace("\"", "\"\"");     //escape quotes so they are handled properly by a csv reader
 
         public static string CleanValue(this string s) =>
-            s.Replace("\r\n", "|");
+            s.Replace("\r\n", "|")
+            .Replace("\"", "\"\""); //escape quotes so they are handled properly by a csv reader
     }
 
 }
