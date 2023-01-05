@@ -14,21 +14,25 @@ namespace OptumHsaSaveItExport
             {
                 ui.Login();
                 List<string> links = ui.GetAllClaimLinks();
-                int stopAfter = 10000;
+                int stopAfter = int.MaxValue; //modify this to a smaller number for debug or trial runs
                 int itemNumber = 1;
 
                 foreach (string link in links)
                 {
-                    if (link == null) continue;//the very last row in the table is empty
-
-                    Console.WriteLine("processing {0} of {1}", itemNumber++, links.Count);
+                    Console.WriteLine("processing {0} of {1}", itemNumber, links.Count);
+                    if (link == null)
+                    {
+                        Console.WriteLine("Info: The very last row of the records table was empty - this is typical when there is a 'show more' button", itemNumber++, links.Count);
+                        continue;
+                    }
 
                     data.AddNewRecord();
                     data.AddProperty("url", link);
                     ui.GoToUrl(link);
                     ui.ProcessDetails(data);
 
-                    if (itemNumber >= stopAfter) break;
+                    itemNumber++;
+                    if (itemNumber > stopAfter) break;
                 }
 
                 data.WriteToCsv();
@@ -37,6 +41,8 @@ namespace OptumHsaSaveItExport
             {
                 ui.Quit();
             }
+            Console.WriteLine("Finished processing all records. You will find your output in the same directory as the binary.\nPress any key to exit.");
+            Console.ReadLine();
         }
 
         static bool HandleArgs(string[] args)
