@@ -25,6 +25,9 @@ namespace OptumHsaSaveItExport
 
         private UiModel()
         {
+            EdgeOptions options = new EdgeOptions();
+            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore;
+
             driver = new EdgeDriver();
             jsDriver = (IJavaScriptExecutor)driver;
         }
