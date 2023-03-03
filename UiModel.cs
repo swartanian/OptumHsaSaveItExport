@@ -21,12 +21,11 @@ namespace OptumHsaSaveItExport
 
         private EdgeDriver driver;
         private IJavaScriptExecutor jsDriver;
-        private bool highlightElements = false;
 
         private UiModel()
         {
             EdgeOptions options = new EdgeOptions();
-            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore;
+            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore; //ignore teh prompt that optum throws up when navigating away from the site, this is needed in some special circumstances
 
             driver = new EdgeDriver();
             jsDriver = (IJavaScriptExecutor)driver;
@@ -39,19 +38,8 @@ namespace OptumHsaSaveItExport
 
         private void Highlight(IWebElement element)
         {
-            if (highlightElements)
-            {
-                jsDriver.ExecuteScript("arguments[0].style.border='2px solid red'", element);
-            }
+            jsDriver.ExecuteScript("arguments[0].style.border='2px solid red'", element);
         }
-
-        private IWebElement FindId(string Id)
-        {
-            IWebElement ret = driver.FindElement(By.Id(Id));
-            Highlight(ret);
-            return ret;
-        }
-
 
         public void ProcessDetails(DataModel data)
         {
@@ -68,7 +56,7 @@ namespace OptumHsaSaveItExport
                 data.AddProperty("Meta Claim Type", systemClaim ? "system generated claim" : "manually entered claim");
 
                 string claimFormName = systemClaim ? "healthPlanClaim" : "claimCenter";
-                var claimForm = FindId(claimFormName);
+                var claimForm = driver.FindElement(By.Id(claimFormName)); 
 
                 //service info section
                 var serviceInfoSection = claimForm.FindElements(By.CssSelector("div.row"))[0]; // the first section doesn't have any further identifiers
@@ -163,7 +151,7 @@ namespace OptumHsaSaveItExport
                 if (images.Count > 0)
                 {
                     string url = images[0].GetAttribute("src");
-                    GetFile(url, fileName, i, ".png");
+                    DownloadFile(url, fileName, i, ".png");
                 }
 
                 //PDF
@@ -171,8 +159,7 @@ namespace OptumHsaSaveItExport
                 if (pdfs.Count > 0)
                 {
                     string url = pdfs[0].GetAttribute("src");
-                    GetFile(url, fileName, i, ".pdf");
-                    //todo: pdfs
+                    DownloadFile(url, fileName, i, ".pdf");
                 }
             }
         }
@@ -193,7 +180,7 @@ namespace OptumHsaSaveItExport
             return ret;
         }
 
-        private void GetFile(string url, string fileSnippet, int i, string extension)
+        private void DownloadFile(string url, string fileSnippet, int i, string extension)
         {
             Console.WriteLine(url);
             Console.WriteLine("Downloading file {0}...", fileSnippet);
@@ -290,7 +277,7 @@ namespace OptumHsaSaveItExport
                     "\n" + line);
             }
 
-            if (Settings.Login >= LoginType.basiclogin)
+            if (Settings.Login == LoginType.autologin)
             {
                 // driver.Url aka link - [https://aka.ms/BCP/FSA_HSA]
                 driver.Url = "https://myapps.microsoft.com/signin/HRIT-Premera-Prod/d1b6f28d-e277-48bf-8871-35a37e6de488?tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47&relaystate=https%3A%2F%2Fmember.premera.com%2FYmlsbHBheQ%3D%3D";

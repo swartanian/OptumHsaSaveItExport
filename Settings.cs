@@ -9,8 +9,7 @@ namespace OptumHsaSaveItExport
     public enum LoginType
     {
         manuallogin,
-        basiclogin,
-        fulllogin
+        autologin
     }
     public class Settings
     {
@@ -18,7 +17,7 @@ namespace OptumHsaSaveItExport
 
         static Settings()
         {
-            Login = LoginType.basiclogin;
+            Login = LoginType.autologin;
         }
     }
 
