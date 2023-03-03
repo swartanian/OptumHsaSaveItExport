@@ -25,13 +25,11 @@ namespace OptumHsaSaveItExport
         {
             EdgeOptions options = new EdgeOptions();
             options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore; //ignore the prompt that optum throws up when navigating away from the site, this is needed in some special circumstances
-            options.SetLoggingPreference("Browser", LogLevel.Warning);
-            options.SetLoggingPreference("Client", LogLevel.Warning);
-            options.SetLoggingPreference("Driver", LogLevel.Warning);
-            options.SetLoggingPreference("Profiler", LogLevel.Warning);
-            options.SetLoggingPreference("Server", LogLevel.Warning);
 
-            driver = new EdgeDriver(options);
+            EdgeDriverService service = EdgeDriverService.CreateDefaultService();
+            service.SuppressInitialDiagnosticInformation = true;
+            service.HideCommandPromptWindow = true;
+            driver = new EdgeDriver(service, options);
         }
 
         public void GoToUrl(string url)
