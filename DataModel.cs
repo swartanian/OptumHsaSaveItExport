@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace OptumHsaSaveItExport
 {
@@ -80,6 +81,21 @@ namespace OptumHsaSaveItExport
                     writer.WriteLine();
                 }
             }
+        }
+
+        public string CreateErrorSummary()
+        {
+            StringBuilder ret = new StringBuilder();
+            ret.Append('=', 50);
+            ret.AppendLine("\n= ERRORS ");
+            ret.Append('=', 50);
+            ret.AppendLine();
+            var errorRecords = records.FindAll(s => s.TryGetValue("Error", out string errorText));
+            foreach (var record in errorRecords)
+            {
+                ret.AppendFormat("ERROR for \n\t{0}\n\t{1}\n", record["Url"], record["Error"]);
+            }
+            return ret.ToString();
         }
     }
 
