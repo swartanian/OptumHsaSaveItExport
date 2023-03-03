@@ -14,7 +14,7 @@ namespace OptumHsaSaveItExport
             {
                 ui.Login();
                 List<string> links = ui.GetAllClaimLinks();
-                int stopAfter = int.MaxValue; //modify this to a smaller number for debug or trial runs
+                int stopAfter = Settings.StopAfter; //modify this to a smaller number for debug or trial runs
                 int itemNumber = 1;
 
                 foreach (string link in links)
@@ -37,13 +37,13 @@ namespace OptumHsaSaveItExport
 
                 data.WriteToCsv();
                 Console.WriteLine(data.CreateErrorSummary());
+                Console.WriteLine("Finished processing all records. You will find your output in the same directory as the binary.\nPress any key to exit and close the browser.");
+                Console.ReadLine();
             }
             finally
             {
                 ui.Quit();
             }
-            Console.WriteLine("Finished processing all records. You will find your output in the same directory as the binary.\nPress any key to exit.");
-            Console.ReadLine();
         }
 
         static bool HandleArgs(string[] args)
@@ -69,5 +69,10 @@ namespace OptumHsaSaveItExport
 
         }
 
+        private static string separatorLine = new string('=', 85);
+        internal static void ConsoleSeparatorLine()
+        {
+            Console.WriteLine(separatorLine);
+        }
     }
 }

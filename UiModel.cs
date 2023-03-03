@@ -20,15 +20,18 @@ namespace OptumHsaSaveItExport
         }
 
         private EdgeDriver driver;
-        private IJavaScriptExecutor jsDriver;
 
         private UiModel()
         {
             EdgeOptions options = new EdgeOptions();
-            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore; //ignore teh prompt that optum throws up when navigating away from the site, this is needed in some special circumstances
+            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore; //ignore the prompt that optum throws up when navigating away from the site, this is needed in some special circumstances
+            options.SetLoggingPreference("Browser", LogLevel.Warning);
+            options.SetLoggingPreference("Client", LogLevel.Warning);
+            options.SetLoggingPreference("Driver", LogLevel.Warning);
+            options.SetLoggingPreference("Profiler", LogLevel.Warning);
+            options.SetLoggingPreference("Server", LogLevel.Warning);
 
-            driver = new EdgeDriver();
-            jsDriver = (IJavaScriptExecutor)driver;
+            driver = new EdgeDriver(options);
         }
 
         public void GoToUrl(string url)
@@ -38,7 +41,7 @@ namespace OptumHsaSaveItExport
 
         private void Highlight(IWebElement element)
         {
-            jsDriver.ExecuteScript("arguments[0].style.border='2px solid red'", element);
+            driver.ExecuteScript("arguments[0].style.border='2px solid red'", element);
         }
 
         public void ProcessDetails(DataModel data)
@@ -268,13 +271,13 @@ namespace OptumHsaSaveItExport
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
 
-            string line = new string('=', 85);
-            Console.WriteLine(line + "\nACTION NEEDED: You have 120 seconds to login.");
             if (Settings.Login == LoginType.manuallogin)
             {
+                Program.ConsoleSeparatorLine();
+                Console.WriteLine("ACTION NEEDED: You have 120 seconds to login.");
                 Console.WriteLine(" Please login and navigate to Optum's HSA save-it account" +
-                    "\n NOTE: Your URL should end in 'piggybank'" +
-                    "\n" + line);
+                    "\n NOTE: Your URL should end in 'piggybank'");
+                Program.ConsoleSeparatorLine();
             }
 
             if (Settings.Login == LoginType.autologin)
