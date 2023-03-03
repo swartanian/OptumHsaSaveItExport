@@ -36,6 +36,7 @@ namespace OptumHsaSaveItExport
                 }
 
                 data.WriteToCsv();
+                Console.WriteLine(data.CreateErrorSummary());
             }
             finally
             {

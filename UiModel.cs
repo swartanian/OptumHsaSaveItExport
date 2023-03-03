@@ -127,6 +127,19 @@ namespace OptumHsaSaveItExport
                     docItems[0].Click(); //it doesn't matter which one to click on, they all go to the same page
                     HandleDocuments(fileName, claimFormName);
                 }
+                else  //check for docs that cannot be downloaded right now. 
+                {
+                    if (docs.Text != "")
+                    {
+                        string errorText = "Documents were not downloaded - message: " + docs.Text;
+                        data.AddProperty("Error", errorText);
+                        Console.WriteLine(errorText);
+
+                        //click the link to "... Request Archived Documentation"
+                        var requestArchivedLink = docs.FindElement(By.CssSelector("a"));
+                        requestArchivedLink.Click();
+                    }
+                }
             }
             catch (Exception e)
             {
