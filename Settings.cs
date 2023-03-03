@@ -19,7 +19,7 @@ namespace OptumHsaSaveItExport
         static Settings()
         {
             Login = LoginType.autologin;
-            StopAfter = 10; //int.MaxValue;
+            StopAfter = int.MaxValue;
         }
     }
 
