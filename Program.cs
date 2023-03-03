@@ -63,8 +63,7 @@ namespace OptumHsaSaveItExport
             {
                 Console.WriteLine("Args are incorrect\nPass the following optional parameters" +
                     "\n manualLogin - you will be responsible for logging in and getting the browser to the optum site and HSA Save-it piggybank url" +
-                    "\n basicLogin - you will be responsible for authenticating with SSO via benefits ehr and clicking Yes/No to staying logged in" +
-                    "\n fullLogin - you will be responsible for only interacting with your 2FA/MFA device, everything else is handled for you");
+                    "\n autoLogin - you will be responsible for only interacting with your 2FA/MFA device, everything else is handled for you");
             }
             return argsAreCorrect;
 
