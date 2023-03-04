@@ -85,9 +85,7 @@ namespace OptumHsaSaveItExport
 
         public string CreateErrorSummary()
         {
-            Program.ConsoleSeparatorLine();
-            Console.WriteLine(" ERRORS");
-            Program.ConsoleSeparatorLine();
+            Program.ConsoleWriteHeader(" ERRORS");
 
             StringBuilder ret = new StringBuilder();
             var errorRecords = records.FindAll(s => s.TryGetValue("Error", out string errorText));

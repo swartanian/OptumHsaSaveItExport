@@ -70,8 +70,10 @@ namespace OptumHsaSaveItExport
         }
 
         private static string separatorLine = new string('=', 85);
-        internal static void ConsoleSeparatorLine()
+        internal static void ConsoleWriteHeader(string headerText)
         {
+            Console.WriteLine(separatorLine);
+            Console.WriteLine(headerText);
             Console.WriteLine(separatorLine);
         }
     }

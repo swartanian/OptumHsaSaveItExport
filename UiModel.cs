@@ -50,6 +50,7 @@ namespace OptumHsaSaveItExport
                 //detect case where the user is logged out (could happen during processing)
                 if (driver.Title.StartsWith("Login"))
                 {
+                    Program.ConsoleWriteHeader("Processing interrupted - restarting with fresh login");
                     Login();
                     GoToUrl(link);
                 }
@@ -279,11 +280,9 @@ namespace OptumHsaSaveItExport
 
             if (Settings.Login == LoginType.manuallogin)
             {
-                Program.ConsoleSeparatorLine();
-                Console.WriteLine("ACTION NEEDED: You have 120 seconds to login.");
-                Console.WriteLine(" Please login and navigate to Optum's HSA save-it account" +
+                Program.ConsoleWriteHeader("ACTION NEEDED: You have 120 seconds to login." + 
+                    "\n Please login and navigate to Optum's HSA save-it account" +
                     "\n NOTE: Your URL should end in 'piggybank'");
-                Program.ConsoleSeparatorLine();
             }
 
             if (Settings.Login == LoginType.autologin)
