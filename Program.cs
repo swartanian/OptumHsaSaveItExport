@@ -28,8 +28,8 @@ namespace OptumHsaSaveItExport
 
                     data.AddNewRecord();
                     data.AddProperty("url", link);
-                    ui.GoToUrl(link);
-                    ui.ProcessDetails(data);
+
+                    ui.ProcessDetails(data, link);
 
                     itemNumber++;
                     if (itemNumber > stopAfter) break;
