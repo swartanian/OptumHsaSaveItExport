@@ -20,15 +20,16 @@ namespace OptumHsaSaveItExport
         }
 
         private EdgeDriver driver;
-        private IJavaScriptExecutor jsDriver;
 
         private UiModel()
         {
             EdgeOptions options = new EdgeOptions();
-            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore; //ignore teh prompt that optum throws up when navigating away from the site, this is needed in some special circumstances
+            options.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore; //ignore the prompt that optum throws up when navigating away from the site, this is needed in some special circumstances
 
-            driver = new EdgeDriver();
-            jsDriver = (IJavaScriptExecutor)driver;
+            EdgeDriverService service = EdgeDriverService.CreateDefaultService();
+            service.SuppressInitialDiagnosticInformation = true;
+            service.HideCommandPromptWindow = true;
+            driver = new EdgeDriver(service, options);
         }
 
         public void GoToUrl(string url)
@@ -38,13 +39,22 @@ namespace OptumHsaSaveItExport
 
         private void Highlight(IWebElement element)
         {
-            jsDriver.ExecuteScript("arguments[0].style.border='2px solid red'", element);
+            driver.ExecuteScript("arguments[0].style.border='2px solid red'", element);
         }
 
-        public void ProcessDetails(DataModel data)
+        public void ProcessDetails(DataModel data, string link)
         {
             try
             {
+                GoToUrl(link);
+                //detect case where the user is logged out (could happen during processing)
+                if (driver.Title.StartsWith("Login"))
+                {
+                    Program.ConsoleWriteHeader("Processing interrupted - restarting with fresh login");
+                    Login();
+                    GoToUrl(link);
+                }
+
                 //show all details
                 bool systemClaim = false; // either systemClaim (most claims) or self-submitted which has to be handled differently
                 var showAll = driver.FindElements(By.Id("allServiceInfoLink"));
@@ -56,7 +66,7 @@ namespace OptumHsaSaveItExport
                 data.AddProperty("Meta Claim Type", systemClaim ? "system generated claim" : "manually entered claim");
 
                 string claimFormName = systemClaim ? "healthPlanClaim" : "claimCenter";
-                var claimForm = driver.FindElement(By.Id(claimFormName)); 
+                var claimForm = driver.FindElement(By.Id(claimFormName));
 
                 //service info section
                 var serviceInfoSection = claimForm.FindElements(By.CssSelector("div.row"))[0]; // the first section doesn't have any further identifiers
@@ -135,7 +145,7 @@ namespace OptumHsaSaveItExport
             catch (Exception e)
             {
                 data.AddProperty("Error", e.Message);
-            }        
+            }
         }
 
         private void HandleDocuments(string fileName, string claimFormName)
@@ -169,7 +179,7 @@ namespace OptumHsaSaveItExport
             Collection<IWebElement> ret = new Collection<IWebElement>();
 
             var aTags = driver.FindElements(By.CssSelector(string.Format("#{0} a", claimFormName)));
- 
+
             foreach (var tag in aTags)
             {
                 if (tag.Text.ToLower().StartsWith("page"))
@@ -268,20 +278,18 @@ namespace OptumHsaSaveItExport
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
 
-            string line = new string('=', 85);
-            Console.WriteLine(line + "\nACTION NEEDED: You have 120 seconds to login.");
             if (Settings.Login == LoginType.manuallogin)
             {
-                Console.WriteLine(" Please login and navigate to Optum's HSA save-it account" +
-                    "\n NOTE: Your URL should end in 'piggybank'" +
-                    "\n" + line);
+                Program.ConsoleWriteHeader("ACTION NEEDED: You have 120 seconds to login." + 
+                    "\n Please login and navigate to Optum's HSA save-it account" +
+                    "\n NOTE: Your URL should end in 'piggybank'");
             }
 
             if (Settings.Login == LoginType.autologin)
             {
                 // driver.Url aka link - [https://aka.ms/BCP/FSA_HSA]
                 driver.Url = "https://myapps.microsoft.com/signin/HRIT-Premera-Prod/d1b6f28d-e277-48bf-8871-35a37e6de488?tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47&relaystate=https%3A%2F%2Fmember.premera.com%2FYmlsbHBheQ%3D%3D";
-                
+
                 wait.Until(ExpectedConditions.UrlContains("https://www.fundingpremerawa.com/"));
                 //Go to save-it
                 driver.Url = "https://www.fundingpremerawa.com/portal/CC/cdhportal/cdhaccount/piggybank";
